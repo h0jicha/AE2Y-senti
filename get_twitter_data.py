@@ -30,6 +30,7 @@ def gettwitterdata(keyword,dfile):
     #つぶやきを格納するリスト
     tweets_data =[]
 
+    i = 0
     #カーソルを使用してデータ取得
     for tweet in api.search_tweets(q=q, lang='ja',count=100,tweet_mode='extended'):
 
@@ -38,7 +39,8 @@ def gettwitterdata(keyword,dfile):
         #print(jsttime)
 
         #つぶやきテキスト(FULL)を取得
-        tweets_data.append(tweet.full_text + '\n')
+        tweets_data.append(f'[{i}] {tweet.full_text}\n')
+        i = i + 1
 
 
     #出力ファイル名
@@ -53,7 +55,7 @@ def gettwitterdata(keyword,dfile):
 if __name__ == '__main__':
 
     #検索キーワードを入力  ※リツイートを除外する場合 「キーワード -RT 」と入力
-    print ('====== Enter Serch KeyWord   =====')
+    print ('====== Enter Search KeyWord   =====')
     keyword = input('>  ')
 
     #出力ファイル名を入力(相対パス or 絶対パス)
