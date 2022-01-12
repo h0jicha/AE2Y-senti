@@ -32,7 +32,8 @@ def gettwitterdata(keyword,dfile):
 
     i = 0
     #カーソルを使用してデータ取得
-    for tweet in api.search_tweets(q=q, lang='ja',count=100,tweet_mode='extended'):
+    count = 100
+    for tweet in api.search_tweets(q=q, lang='ja',count=count,tweet_mode='extended'):
 
         #つぶやき時間がUTCのため、JSTに変換  ※デバッグ用のコード
         #jsttime = tweet.created_at + datetime.timedelta(hours=9)
@@ -41,7 +42,7 @@ def gettwitterdata(keyword,dfile):
         #つぶやきテキスト(FULL)を取得
         tweets_data.append(f'[{i}] {tweet.full_text}\n---------------------------------------\n')
         i = i + 1
-        print("\r", i+1 if i+1 != 100 else 'completed getting', end="")
+        print("\r", i+1 if i != count else '\ncompleted getting\n', end="")
 
 
     #出力ファイル名
@@ -60,7 +61,7 @@ if __name__ == '__main__':
     keyword = input('>  ')
 
     #出力ファイル名を入力(相対パス or 絶対パス)
-    print ('====== Enter Tweet Data file =====')
-    dfile = input('>  ')
+    #print ('====== Enter Tweet Data file =====')
+    dfile = 'tweets.txt'
 
     gettwitterdata(keyword,dfile)

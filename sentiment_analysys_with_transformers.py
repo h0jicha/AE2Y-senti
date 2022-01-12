@@ -21,7 +21,7 @@ def analyze():
     reg = '---------------------------------------'
     dict = {}
     buf = ''
-    with open('./test.txt') as f:
+    with open('./tweets.txt') as f:
         for line in f:
             # ツイートを読み切るまでbufに追加
             if re.search(reg,line) is None:
@@ -30,14 +30,16 @@ def analyze():
             senti = nlp(buf)
             dict.setdefault(buf,senti)
             print(buf)
-            print(senti)
+            print(str(senti))
             print("\n")
             buf = ''
 
     print('write output')
 
     with open('./output.txt', "w") as f:
-        for str, senti in dict.items():
-            f.write(str)
-            f.write(senti)
-            print("\n")
+        for k, v in dict.items():
+            f.write(k)
+            f.write(str(v))
+            f.write('\n---------------------------------------\n')
+
+    print('done')
