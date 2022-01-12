@@ -39,8 +39,9 @@ def gettwitterdata(keyword,dfile):
         #print(jsttime)
 
         #つぶやきテキスト(FULL)を取得
-        tweets_data.append(f'[{i}] {tweet.full_text}\n')
+        tweets_data.append(f'[{i}] {tweet.full_text}\n---------------------------------------\n')
         i = i + 1
+        print("\r", i+1 if i+1 != 100 else 'completed getting', end="")
 
 
     #出力ファイル名
