@@ -1,14 +1,14 @@
 import sys
-import tweepy
-import datetime
-
 sys.path.append('../')
 from twitter_token_getter import load_twitter_tokens
 
+import tweepy
+from pytz import timezone
 
-def get_tweets(query, path_output, count=15):
-    list_tweets = []
+import pandas as pd
 
+
+def do_auth():
     dict_token = load_twitter_tokens()
 
     auth = tweepy.OAuthHandler(
@@ -18,28 +18,60 @@ def get_tweets(query, path_output, count=15):
 
     api = tweepy.API(auth, wait_on_rate_limit=True)
 
-    # index = 0
-    for tweet in api.search_tweets(q=query, lang='ja', count=count, tweet_mode='extended'):
+    return api
 
-        # つぶやき時間がUTCのため、JSTに変換  ※デバッグ用のコード
-        jsttime = tweet.created_at + datetime.timedelta(hours=9)
-        print(jsttime)
 
-        list_tweets.append(f'{tweet.id},{tweet.created_at}')
-        
-        # f'[{index}]<{tweet.id},{tweet.created_at}> {tweet.full_text}\n---------------------------------------\n')
-        # index += 1
-        # print("\r", index + 1 if index != count else '\ncompleted getting\n', end="")
+def get_tweet_ids(api, query, path_output, lang='ja', count=15):
+    list_id = []
+    list_date = []
+
+    # get tweet ids
+    for tweet in api.search_tweets(q=query, lang=lang, count=count, tweet_mode='extended'):
+
+        if lang == 'ja':
+            tweet.created_at = tweet.created_at.astimezone(
+                timezone('Asia/Tokyo'))
+
+        list_id.append(tweet.id)
+        list_date.append(tweet.created_at)
+
+    print(f'list_id length:{len(list_id)}')
+
+    fname = r"'" + path_output + "'"
+    fname = fname.replace("'", "")
+
+    lst = list(zip(list_id, list_date))
+    df = pd.DataFrame(lst, columns=['id', 'created_at'])
+
+    df.to_csv(path_output)
+
+
+def get_tweet_texts(api, path_input, path_output):
+    list_text = []
+
+    df = pd.read_csv(path_input)
+
+    for id in df['id'].to_list():
+        text = f'[{id}]\n'
+        text += api.get_status(id=id).text
+        text += '\n---------------------------------------\n'
+        list_text.append(text)
+
+    print(f'list_text length:{len(list_text)}')
 
     fname = r"'" + path_output + "'"
     fname = fname.replace("'", "")
 
     with open(fname, "w", encoding="utf-8") as f:
-        f.writelines(list_tweets)
+        f.writelines(list_text)
 
 
 if __name__ == '__main__':
-    QUERY = "新型肺炎 OR コロナ OR ウイルス OR ウィルス OR 武漢 OR デルタ OR オミクロン OR デルタクロン OR 感染者数 - RT"
-    PATH_OUTPUT = '../_data/tweets0000.txt'
 
-    get_tweets(QUERY, PATH_OUTPUT)
+    QUERY = "新型肺炎 OR コロナ OR ウイルス OR ウィルス OR 武漢 OR デルタ株 OR オミクロン株 OR デルタクロン株 OR 感染者数 -RT -iHerb"
+    PATH_IDS = '../_data/tweet_ids_0000.csv'
+    PATH_TEXTS = '../_data/tweet_texts_0000.csv'
+
+    api = do_auth()
+    list_id = get_tweet_ids(api, QUERY, PATH_IDS)
+    get_tweet_texts(api, PATH_IDS, PATH_TEXTS)
