@@ -10,11 +10,11 @@ from mywc import wc
 if __name__ == '__main__':
 
     # 検索文字列
-    QUERY = "新型肺炎 OR コロナ OR ウイルス OR ウィルス OR 武漢 OR デルタ株 OR オミクロン株 OR デルタクロン株 OR 感染者数 -RT -iHerb"
-    NG_WORDS_WC = ['新型肺炎', 'コロナ', 'ウイルス', 'ウィルス', '武漢', 'デルタ株', 'オミクロン株', 'デルタクロン株', '感染者数']
+    QUERY = "新型肺炎 OR コロナ OR ウイルス OR ウィルス OR 武漢 OR デルタ株 OR オミクロン株 -RT -iHerb"
+    NG_WORDS_WC = ['新型肺炎', 'コロナ', 'ウイルス', 'ウィルス', '武漢', 'デルタ株', 'オミクロン株']
     
     # 検索日時
-    day = 21 # この日の
+    day = 22 # この日の
     hour = 20 # この１時間について、10分刻みにデータを取得する
     minute = 0 
     list_until = [f'2022-01-{day}_{hour+1}:00:00_JST']
@@ -50,7 +50,7 @@ if __name__ == '__main__':
     
     # sentiment analysis
     print('analyzing tweets with ML-Ask...')
-    analyzer_with_mlask.analyze(PATH_TEXTS_READY, PATH_SENTIMENT_VALUES_MLASK)
+    analyzer_with_mlask.analyze(PATH_TEXTS_READY, PATH_SENTIMENT_VALUES_MLASK, day)
     print('analyzing tweets with ML-Ask done')
     
     print('analyzing tweets with BERT...')
