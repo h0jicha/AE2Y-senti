@@ -44,20 +44,11 @@ def analyze(path_input, path_output):
                     del l[0]
                 for emo in l:
                     dict_emotion[emo] += 1
-            print(buf)
-            print(str(value))
-            print("\n")
             buf = ''
-
-    print('write output')
 
     with open(path_output, "w") as f:
         for k, v in dict.items():
             f.write(str(v)+'\n')
-
-    print('done')
-    
-    print(dict_emotion)
 
 
 if __name__ == '__main__':
