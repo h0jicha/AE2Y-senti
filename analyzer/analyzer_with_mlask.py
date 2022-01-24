@@ -48,15 +48,15 @@ def analyze(path_input, path_output, index):
                     dict_emotion[emo] += 1
             buf = ''
 
-    with open(path_output, "w") as f:
-        for k, v in dict.items():
-            f.write(str(v)+'\n')
+#    with open(path_output, "w") as f:
+#        for k, v in dict.items():
+#            f.write(str(v)+'\n')
 
 #    print(dict_emotion)
     
-    # visualize
+    # as dataframe
     df = pd.DataFrame([dict_emotion], index = [index])
-    df.to_csv('../_data/df_mlask.csv', mode='a')
+    df.to_csv(path_output, mode='a')
     
     print(df)
 
