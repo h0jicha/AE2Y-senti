@@ -6,7 +6,7 @@ tweets収集：tweepy
 
 感情分析器：
 - ML-Ask
-- daigo/bert-base-japanese-sentiment（Huggingface Transformers）
+- bert-base-japanese-sentiment（Huggingface Transformers）
 
 形態素解析：MeCab
 
