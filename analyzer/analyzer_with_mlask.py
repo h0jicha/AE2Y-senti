@@ -2,19 +2,14 @@ from io import StringIO
 import os
 import re
 
-from transformers import pipeline
-from transformers import AutoModelForSequenceClassification
-from transformers import BertJapaneseTokenizer
+from mlask import MLAsk
 
 def analyze(path_input, path_output):
 
     print('prepare to analyze')
 
-    model = AutoModelForSequenceClassification.from_pretrained(
-        'daigo/bert-base-japanese-sentiment')
-    tokenizer = BertJapaneseTokenizer.from_pretrained(
-        'cl-tohoku/bert-base-japanese-whole-word-masking')
-    nlp = pipeline("sentiment-analysis", model=model, tokenizer=tokenizer)
+    emotion_analyzer = MLAsk()
+#data = emotion_analyzer.analyze('いや〜なかなかコロナがおさまらなくて大変だなあ。だけどもう少しの辛抱だと思うんだ。大変だと思うけど頑張ろうね。')
 
     print('start analyzing')
 
@@ -28,7 +23,7 @@ def analyze(path_input, path_output):
             if re.search(reg, line) is None:
                 buf += line
                 continue
-            value = nlp(buf)
+            value = emotion_analyzer.analyze(buf)
             dict.setdefault(buf, value)
             print(buf)
             print(str(value))
@@ -39,9 +34,7 @@ def analyze(path_input, path_output):
 
     with open(path_output, "w") as f:
         for k, v in dict.items():
-            f.write(k)
-            f.write(str(v))
-            f.write('\n---------------------------------------\n')
+            f.write(str(v)+'\n')
 
     print('done')
 
