@@ -63,6 +63,9 @@ def get_tweet_texts(api, path_input, path_output):
         except tweepy.errors.NotFound:
             print(f'tweet id:{id} not found.')
             continue
+        except Exception:
+            print('something happened')
+            continue
         text += '\n---------------------------------------\n'
         list_text.append(text)
 
