@@ -1,6 +1,7 @@
 import sys
 sys.path.append('../')
 from twitter_token_getter import load_twitter_tokens
+from preprocessor import preprocess
 
 import tweepy
 from pytz import timezone
@@ -71,7 +72,9 @@ if __name__ == '__main__':
     QUERY = "新型肺炎 OR コロナ OR ウイルス OR ウィルス OR 武漢 OR デルタ株 OR オミクロン株 OR デルタクロン株 OR 感染者数 -RT -iHerb"
     PATH_IDS = '../_data/tweet_ids_0000.csv'
     PATH_TEXTS = '../_data/tweet_texts_0000.csv'
+    PATH_TEXTS_READY = '../_data/tweet_texts_ready_0000.csv'
 
     api = do_auth()
     list_id = get_tweet_ids(api, QUERY, PATH_IDS)
     get_tweet_texts(api, PATH_IDS, PATH_TEXTS)
+    preprocess(PATH_TEXTS, PATH_TEXTS_READY)
