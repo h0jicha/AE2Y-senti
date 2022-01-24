@@ -7,6 +7,7 @@ from transformers import AutoModelForSequenceClassification
 from transformers import BertJapaneseTokenizer
 
 def analyze(path_input, path_output):
+    list_score = []
 
     print('prepare to analyze')
 
@@ -16,7 +17,7 @@ def analyze(path_input, path_output):
         'cl-tohoku/bert-base-japanese-whole-word-masking')
     nlp = pipeline("sentiment-analysis", model=model, tokenizer=tokenizer)
 
-    print('start analyzing')
+    print('analyzing...')
 
     #reg = '\[[0-9]+\]'
     reg = '---------------------------------------'
@@ -29,25 +30,29 @@ def analyze(path_input, path_output):
                 buf += line
                 continue
             value = nlp(buf)
+            list_score.append(value[0]['score'])
             dict.setdefault(buf, value)
-            print(buf)
-            print(str(value))
-            print("\n")
+#            print(buf)
+#            print(str(value))
+#            print("\n")
             buf = ''
 
     print('write output')
 
     with open(path_output, "w") as f:
         for k, v in dict.items():
-            f.write(k)
+#            f.write(k)
             f.write(str(v))
             f.write('\n---------------------------------------\n')
 
     print('done')
+    
+    print(f"score mean:{sum(list_score)/len(list_score)}")
 
 
 if __name__ == '__main__':
-    PATH_TEXTS_READY = '../_data/tweet_texts_ready_0000.csv'
-    PATH_SENTIMENT_VALUES = '../_data/values_0000.csv'
+    date = '01232000'
+    PATH_TEXTS_READY = f'../_data/tweet_texts_ready_{date}.txt'
+    PATH_SENTIMENT_VALUES = f'../_data/values_{date}.txt'
     
     analyze(PATH_TEXTS_READY, PATH_SENTIMENT_VALUES)
