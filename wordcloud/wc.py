@@ -1,46 +1,50 @@
+import re
+import MeCab
 from wordcloud import WordCloud
-import os
-from os.path import join, dirname
-from dotenv import load_dotenv
 
-load_dotenv( verbose = True )
-dotenv_path = join( dirname( __file__ ), '.env' )
-load_dotenv( dotenv_path )
- 
-TXT_NAME = "tweets"
-FONT_PATH = os.environ.get( "FONT_PATH" ) 
- 
- 
-def get_word_str(text):
-    import MeCab
-    import re
- 
+from googletrans import Translator
+
+import sys
+sys.path.append('../')
+from twitter_token_getter import load_font_path
+
+
+def get_word_str(text, NG_words = []):
     mecab = MeCab.Tagger()
     parsed = mecab.parse(text)
     lines = parsed.split('\n')
     lines = lines[0:-2]
-    word_list = []
- 
+    list_word = []
+
     for line in lines:
         tmp = re.split('\t|,', line)
- 
+
         # 名詞のみ対象
         if tmp[1] in ["名詞"]:
             # さらに絞り込み
             if tmp[2] in ["一般", "固有名詞"]:
-                word_list.append(tmp[0])
- 
-    return " " . join(word_list)
- 
- 
-# テキストファイル読み込み
-read_text = open(TXT_NAME + ".txt", encoding="utf8").read()
- 
-# 文字列取得
-word_str = get_word_str(read_text)
- 
-# 画像作成
-wc = WordCloud(font_path=FONT_PATH, max_font_size=40).generate(word_str)
- 
-# 画像保存（テキストファイル名で）
-wc.to_file(TXT_NAME + ".png")
+                list_word.append(tmp[0])
+                
+    list_word = " ".join(list_word)    
+    
+    for word in NG_words:
+        list_word = list_word.replace(word, '')
+
+    return list_word
+
+
+if __name__ == '__main__':
+    NG_WORDS = ['新型肺炎', 'コロナ', 'ウイルス', 'ウィルス', '武漢', 'デルタ株', 'オミクロン株', 'デルタクロン株', '感染者数']
+    date = '01232000'
+    PATH_TEXTS_READY = f'../_data/tweet_texts_ready_{date}.txt'
+    PATH_WC = f'../_data/wordcloud_{date}.png'
+    FONT_PATH = load_font_path()
+
+    read_text = open(PATH_TEXTS_READY, encoding="utf8").read()
+    word_str = get_word_str(read_text, NG_WORDS)
+    
+    print(word_str)
+
+    wc = WordCloud(font_path=FONT_PATH, max_font_size=40).generate(word_translated)
+
+    wc.to_file(PATH_WC)
