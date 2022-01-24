@@ -27,7 +27,7 @@ def get_tweet_ids(api, query, path_output, until, lang='ja', count=15):
     list_date = []
 
     # get tweet ids
-    i = 0
+#    i = 0
     for tweet in api.search_tweets(q=query, lang=lang, count=count, tweet_mode='extended', until=until):
 
         if lang == 'ja':
@@ -37,8 +37,8 @@ def get_tweet_ids(api, query, path_output, until, lang='ja', count=15):
         list_id.append(tweet.id)
         list_date.append(tweet.created_at)
         
-        i += 1
-        print("\r", i+1 if i != count else '\ncompleted getting\n', end="")
+#        i += 1
+#        print("\r", i+1 if i != count else '\ncompleted getting\n', end="")
 
     print(f'\nlist_id length:{len(list_id)}')
 
@@ -61,7 +61,10 @@ def get_tweet_texts(api, path_input, path_output):
         try:
             text += api.get_status(id=id).text
         except tweepy.errors.NotFound:
-            print(f'whoa, id:{id} not found.')
+            print(f'tweet id:{id} not found.')
+            continue
+        except Exception:
+            print('something happened')
             continue
         text += '\n---------------------------------------\n'
         list_text.append(text)

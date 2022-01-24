@@ -4,7 +4,9 @@ import re
 
 from mlask import MLAsk
 
-def analyze(path_input, path_output):
+import pandas as pd
+
+def analyze(path_input, path_output, index):
     dict_emotion = {
         'suki': 0,
         'ikari': 0,
@@ -46,14 +48,21 @@ def analyze(path_input, path_output):
                     dict_emotion[emo] += 1
             buf = ''
 
-    with open(path_output, "w") as f:
-        for k, v in dict.items():
-            f.write(str(v)+'\n')
+#    with open(path_output, "w") as f:
+#        for k, v in dict.items():
+#            f.write(str(v)+'\n')
 
+#    print(dict_emotion)
+    
+    # as dataframe
+    df = pd.DataFrame([dict_emotion], index = [index])
+    df.to_csv(path_output, mode='a')
+    
+    print(df)
 
 if __name__ == '__main__':
     date = '01232000'
     PATH_TEXTS_READY = f'../_data/tweet_texts_ready_{date}.txt'
     PATH_SENTIMENT_VALUES = f'../_data/values_mlask_{date}.txt'
     
-    analyze(PATH_TEXTS_READY, PATH_SENTIMENT_VALUES)
+    analyze(PATH_TEXTS_READY, PATH_SENTIMENT_VALUES, 0)
